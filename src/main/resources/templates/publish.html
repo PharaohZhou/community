@@ -17,7 +17,7 @@
                 <span class="sr-only">Code社区</span>
 
             </button>
-            <a class="navbar-brand" href="/">Code社区</a>
+            <a class="navbar-brand" href="#">Code社区</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <form class="navbar-form navbar-left">
@@ -27,9 +27,6 @@
                 <button type="submit" class="btn btn-default">搜索</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li th:if="${session.user != null}">
-                    <a href="/publish">发布</a>
-                </li>
                 <li class="dropdown" th:if="${session.user != null}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false" th:text="${session.user.getName()}"><span class="caret"></span></a>
@@ -50,29 +47,45 @@
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-            <h2><span class="glyphicon glyphicon-list" aria-hidden="true"></span> 发现</h2>
+            <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 发起</h2>
             <hr/>
-            <div class="media" th:each="question : ${questions}">
-                <div class="media-left">
-                    <a href="#">
-                        <img class="media-object img-rounded"
-                             th:src="${question.user.avatarUrl}">
-                    </a>
+            <form action="/publish" method="post">
+                <div class="form-group">
+                    <label for="title">问题标题（简单扼要）:</label>
+                    <input type="text" class="form-control" th:value="${title}" id="title" name="title" placeholder="问题标题....">
                 </div>
-                <div class="media-body">
-                    <h4 class="media-heading" th:text="${question.title}"></h4>
-                    <sapn th:text="${question.description}"></sapn>
-                    <br>
-                    <span class="text-desc">• <span th:text="${question.commentCount}"></span> 个回复 • <span
-                        th:text="${question.viewCount}"></span> 次浏览 • <span
-                        th:text="${#dates.format(question.gmtCreate,'dd MMMM yyyy')}"></span></span>
+                <div class="form-group">
+                    <label for="description">问题补充 (必填，请参照右侧提示):</label>
+                    <textarea class="form-control" rows="10" cols="30" th:text="${description}" name="description"
+                              id="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="tag">添加标签:</label>
+                    <input type="text" class="form-control" id="tag" th:value="${tag}" name="tag"
+                           placeholder="创建或添加新的话题，以逗号分隔....">
+                </div>
 
+                <div class="container-fluid main">
+                    <div class="row">
+                        <div class="alert alert-danger col-lg-3 col-md-12 col-sm-12 col-xs-12" th:text="${error}"
+                             th:if="${error != null}"></div>
+                        <button type="submit" class="btn btn-success btn-publish">
+                            发布
+                        </button>
+                    </div>
                 </div>
-            </div>
+
+            </form>
 
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-            <h3>热门话题</h3>
+            <h3>问题发起指南</h3>
+            · 服务器运行环境信息； <br>
+            · 软件版本；<br>
+            · 问题发生的上下文信息；<br>
+            · 可以完整复现问题的代码（如可直接运行于 Kibana Console 的复现流程）；<br>
+            · 补充完整的异常和错误信息；<br>
+            · 注意阅读格式友好，代码和异常信息请用代码标签格式化张贴；<br>
         </div>
     </div>
 </div>
