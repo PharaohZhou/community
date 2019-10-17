@@ -22,3 +22,16 @@ body{
     font-weight: normal;
     color: #999;
 }
+
+.profile .section{
+    margin-top: 15px;
+}
+
+.community-menu {
+    font-size: 13px;
+    color: #999;
+}
+
+.jumbotron {
+    margin: 50px;
+}
