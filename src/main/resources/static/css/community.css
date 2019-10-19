@@ -1,13 +1,13 @@
-.main{
+.main {
     margin: 20px;
     background-color: white;
 }
 
-body{
+body {
     background-color: #efefef;
 }
 
-.btn-publish{
+.btn-publish {
     float: right;
     margin-bottom: 15px;
 }
@@ -17,13 +17,17 @@ body{
     height: 38px;
 }
 
+.media-body {
+    padding-top: 10px;
+}
+
 .text-desc {
     font-size: 12px;
     font-weight: normal;
     color: #999;
 }
 
-.profile .section{
+.profile .section {
     margin-top: 15px;
 }
 
@@ -34,4 +38,8 @@ body{
 
 .jumbotron {
     margin: 50px;
+}
+
+.comment {
+    margin: 10px 0px;
 }
