@@ -1,5 +1,6 @@
 package top.zhoulis.community.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import top.zhoulis.community.model.QuestionExample;
 import top.zhoulis.community.model.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -39,12 +42,14 @@ public class QuestionService {
             page = 1;
         }
 
-        if (page > paginationDTO.getTotalPage()){
+        if (page > paginationDTO.getTotalPage()) {
             page = paginationDTO.getTotalPage();
         }
 
         Integer offset = size * (page - 1);
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(offset, size));
+        QuestionExample example = new QuestionExample();
+        example.setOrderByClause("gmt_create desc");
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
 
@@ -70,14 +75,16 @@ public class QuestionService {
             page = 1;
         }
 
-        if (page > paginationDTO.getTotalPage()){
+        if (page > paginationDTO.getTotalPage()) {
             page = paginationDTO.getTotalPage();
         }
 
         Integer offset = size * (page - 1);
 
         QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
         questionExample.createCriteria().andCreatorEqualTo(userId);
+
         List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
@@ -133,6 +140,7 @@ public class QuestionService {
 
     /**
      * 点击增加阅读数
+     *
      * @param id
      */
     public void incView(Long id) {
@@ -140,5 +148,29 @@ public class QuestionService {
         question.setId(id);
         question.setViewCount(1);
         questionExtMapper.incView(question);
+    }
+
+    /**
+     * 展示标签
+     * @param queryDTO
+     * @return
+     */
+    public List<QuestionDTO> selectRelated(QuestionDTO queryDTO) {
+        if (StringUtils.isBlank(queryDTO.getTag())) {
+            return new ArrayList<>();
+        }
+        String[] tags = StringUtils.split(queryDTO.getTag(), ",");
+        String regexpTag = Arrays.stream(tags).collect(Collectors.joining("|"));
+        Question question = new Question();
+        question.setId(queryDTO.getId());
+        question.setTag(regexpTag);
+        List<Question> questions = questionExtMapper.selectRelated(question);
+        List<QuestionDTO> questionDTOS = questions.stream().map(q -> {
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(q, questionDTO);
+            return questionDTO;
+        }).collect(Collectors.toList());
+        /*StringUtils.replace(questionDTO.getTag(), ",", "|");*/
+        return questionDTOS;
     }
 }
